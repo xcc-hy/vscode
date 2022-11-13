@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+    <!-- Animated -->
+    <div class="animated fadeIn">
+        <div>
+            <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#positionAddModal">
+            <i class=" fa fa-plus"></i>&nbsp; 添加职位</button>
+        </div>
+        <!-- Orders -->
+        <div class="orders">
+            <div class="row">
+                <div class="col-xl-12">
+                    <div class="card">
+
+                        <div class="card-header">
+                            <strong>已发布职位表</strong>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-stats order-table ov-h">
+                                <table class="table ">
+
+                                    <thead>
+                                        <tr>
+                                            <th class="serial">#</th>
+                                            <th>名称</th>
+                                            <th>工作城市</th>
+                                            <th>新资范围</th>
+                                            <th>学历要求</th>
+                                            <th>详情</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="positionTbody"></tbody>
+
+                                </table>
+
+                            </div> <!-- /.table-stats -->
+
+                        </div><!-- /.card-stats -->
+                        <ul class="pagination" id="pagination2"></ul>
+                    </div> <!-- /.card-body -->
+                </div> <!-- /.col-xl-12 -->
+            </div> <!-- /.row -->
+        </div><!-- /.orders -->
+    </div><!-- .animated -->
+    <!-- /. right-panel  -->
+
+    <!--positionAddModal  -->
+    <div class="modal fade" id="positionAddModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">添加职位</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="positionFrm">
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>职位类别:</label></div>
+                            <div class="col-12 col-md-4">
+                                <select class="form-control" id="pid"></select>
+                            </div>
+
+                            <div class="col col-md-2"><label>职位名</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="name" id="name">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>最小工资</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="3000" min="0" max="9999999" step="100" type="number" class="form-control"
+                                    name="minSales" id="minSales">
+                            </div>
+
+                            <div class="col col-md-2"><label>最大工资</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="10000" min="0" max="9999999" step="100" type="number" class="form-control"
+                                    name="maxSales" id="maxSales">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>工作城市</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="city" id="city">
+                            </div>
+
+                            <div class="col col-md-2"><label>招聘人数</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                    name="requiredNum" id="requiredNum">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>学历要求</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="education" id="education">
+                            </div>
+
+                            <div class="col col-md-2"><label>技能要求</label></div>
+                            <div class="col-12 col-md-4">
+                                <button type="button" class="btn btn-outline-primary btn-sm" name="skillAddBtn">
+                                    <i class="fa fa-plus-circle"></i>&nbsp; 添加技能
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作详细地址</label>
+                            <textarea class="form-control" rows="2" name="address" id="address"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作经验要求</label>
+                            <textarea class="form-control" rows="3" name="workedyears" id="workedyears"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作详细描述:</label>
+                            <textarea class="form-control" rows="5" name="detail" id="detail"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="positionAdd">提交</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--/. positionAddModal  -->
+
+    <!--positionEditModal  -->
+    <div class="modal fade" id="positionEditModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">修改职位</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+
+                    <form id="positionFrm3">
+                        <input type="hidden" class="form-control" name="id3" id="id3">
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>职位类别:</label></div>
+                            <div class="col-12 col-md-4">
+                                <select class="form-control" id="pid2"></select>
+                            </div>
+
+                            <div class="col col-md-2"><label>职位名</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="name3" id="name3">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>最小工资</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="3000" min="0" max="9999999" step="100" type="number" class="form-control"
+                                    name="minSales3" id="minSales3">
+                            </div>
+
+                            <div class="col col-md-2"><label>最大工资</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="10000" min="0" max="9999999" step="100" type="number" class="form-control"
+                                    name="maxSales3" id="maxSales3">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>工作城市</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="city3" id="city3">
+                            </div>
+
+                            <div class="col col-md-2"><label>招聘人数</label></div>
+                            <div class="col-12 col-md-4">
+                                <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                    name="requiredNum3" id="requiredNum3">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col col-md-2"><label>学历要求</label></div>
+                            <div class="col-12 col-md-4">
+                                <input type="text" class="form-control" name="education3" id="education3">
+                            </div>
+
+                            <div class="col col-md-2"><label>技能要求</label></div>
+                            <div class="col-12 col-md-4">
+                                <button type="button" class="btn btn-outline-primary btn-sm" name="skillAddBtn">
+                                    <i class="fa fa-plus-circle"></i>&nbsp; 添加技能
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作详细地址</label>
+                            <textarea class="form-control" rows="2" name="address" id="address3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作经验要求</label>
+                            <textarea class="form-control" rows="3" name="workedyears" id="workedyears3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>工作详细描述:</label>
+                            <textarea class="form-control" rows="5" name="detail" id="detail3"></textarea>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="positionAdd2">提交</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--/. positionEditModal  -->
+
+    <!--skillAddModal  -->
+    <div class="modal fade" id="skillAddModal">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">添加技能</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="table-stats order-table ov-h">
+                        <table class="table ">
+                            <thead>
+                                <tr style="display:block;">
+                                    <th style="width:20%">选择</th>
+                                    <th style="width:20%">编号</th>
+                                    <th style="width:20%">名称</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="skillTbody" style="height:200px;display:block;overflow:auto"></tbody>
+                        </table>
+                    </div>
+
+                    <ul class="pagination" id="pagination1"></ul>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="skillModalBtn">关闭</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--/. skillAddModal  -->
+
+
+    <!--/. positionDetailModal  -->
+    <div class="modal fade" id="positionDetailModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title">职位详情</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="positionFrm2">
+                        <div class="form-group">
+                            <label>工作详细地址</label>
+                            <textarea class="form-control" rows="2" name="address" id="address2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>工作详细描述:</label>
+                            <textarea class="form-control" rows="5" name="detail" id="detail2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>工作经验要求</label>
+                            <textarea class="form-control" rows="3" name="workedyears2" id="workedyears2"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>技能要求</label>
+                            <div id="skillSet">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>招聘人数</label>
+                            <input type="text" class="form-control" name="requiredNum2" id="requiredNum2">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
