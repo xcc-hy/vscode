@@ -14,20 +14,45 @@ jQuery(document).ready(function ($) {
         $("#leftdiv").load("leftmenuAdmin.html");
     }
 
-    $("a.nav-link").click(function () {
-        $("#content").load($(this).attr('data'));
-    });
-
     var headerVue = new Vue({
         el : "#header",
         data : {
-            commonUser : commonUser
+            user : commonUser,
+			imgUrl : "img/admin.jpg",
         },
+		created () {
+			this.loadIco();
+		},
+		watch : {
+			user () {
+				this.loadIco();
+			},
+		},
         computed : {
             login() {
-                return commonUser != null;
+                return this.user != null;
             },
-        }
+        },
+		methods : {
+			logout() {
+				if (confirm("确定退出登录？你的登录信息将被删除!")) {
+					removeToken();
+					window.location.href = "login.html";
+				}
+			},
+			loadIco() {
+				if (this.user != null && this.user.imgPath != null && this.user.imgPath != "") {
+					var _this = this;
+					axios.get(JSON_URL.file.ico + this.user.imgPath).then(function (response) {
+						if (response.code == RESPONSE_CODE.SUCCESS) {
+							_this.imgUrl = "data:image/png;base64," + response.data;
+						} else {
+							alert(response.msg);
+						}
+					});
+				}
+			},
+		}
     })
 
 });
@@ -98,6 +123,12 @@ $(function() {
 		} 
 			 
 	}); 
+
+	
+
+    $("a.nav-link").click(function () {
+        $("#content").load($(this).attr('data'));
+    });
 
 	 
 	$(".menu-item-has-children.dropdown").each(function() {

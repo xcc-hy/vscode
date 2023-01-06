@@ -54,10 +54,9 @@
                                                 <label for="imageFile">
                                                     <img id="imagePath" title="点击修改头像"
                                                         class="align-self-center rounded-circle mr-3"
-                                                        style="width:85px; height:85px;" alt="" src="img/admin.jpg">
-                                                    <form id="imageModifyFrm" action="user/modifyImage" method="post"
-                                                        enctype="multipart/form-data" class="form-horizontal">
-                                                        <input style="display: none" type="file" id="imageFile"
+                                                        style="width:85px; height:85px;" alt="" :src="imgUrl">
+                                                    <form id="imageModifyFrm" class="form-horizontal">
+                                                        <input style="display: none" type="file" id="imageFile" v-on:change="updateIco"
                                                             name="imageFile">
                                                     </form>
                                                 </label>
@@ -203,8 +202,7 @@
                             <strong>企业用户申请</strong>
                         </div>
                         <div class="card-body card-block" id="applicationDiv">
-                            <form id="applicationFrm" action="user/application" method="post"
-                                enctype="multipart/form-data" class="form-horizontal">
+                            <form id="applicationFrm" class="form-horizontal">
 
                                 <ul id="tabs" class="nav nav-tabs">
                                     <li><a href="#config" data-toggle="tab" style="font-size: 20px;">加入已注册企业</a></li>
@@ -344,7 +342,7 @@
                                             <div class="col col-md-3"><label for="imageFile"
                                                     class=" form-control-label addRedStar">上传营业执照</label></div>
                                             <div class="col-12 col-md-9"><input type="file" id="businessLicense"
-                                                    v-on:change="companyName" name="businessLicense"
+                                                    v-on:change="pathChange" name="businessLicense"
                                                     class="form-control-file"></div>
                                         </div>
 

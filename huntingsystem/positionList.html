@@ -2,325 +2,528 @@
 <html lang="en">
 
 <head>
+    <style>
+        .red_font {
+            color: red;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Animated -->
-    <div class="animated fadeIn">
-        <div>
-            <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#positionAddModal">
-            <i class=" fa fa-plus"></i>&nbsp; 添加职位</button>
-        </div>
-        <!-- Orders -->
-        <div class="orders">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
+    <div id="main-position-list">
+        <!-- Animated -->
+        <div class="animated fadeIn">
+            
+            <!-- Orders -->
+            <div class="orders">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
 
-                        <div class="card-header">
-                            <strong>已发布职位表</strong>
-                        </div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 form-group input-group" >
+                                        <div class="input-group-addon">所属行业</div>
+                                        <select class="form-control" v-model="industryType">
+                                            <option value="">请选择</option>
+                                            <option v-for="(industry, i) of industryList" :value="i">{{industry.name}}</option>
+                                        </select>
+                                        <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                        </div>
+                                        <select class="form-control" v-model="queryParam.industryId">
+                                            <option value="">请选择</option>
+                                            <option v-for="(name, i) of selectedIndustry" :value="i">{{name}}</option>
+                                        </select>
+                                    </div>
 
-                        <div class="card-body">
-                            <div class="table-stats order-table ov-h">
-                                <table class="table ">
+                                    <div class="col-md-6 form-group input-group" >
+                                        <div class="input-group-addon">职位</div>
+                                        <select class="form-control" v-model="positionType">
+                                            <option value="">请选择</option>
+                                            <option v-for="(position, i) of positionList" :value="i">{{position.name}}</option>
+                                        </select>
+                                        <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                        </div>
+                                        <select class="form-control" v-model="queryParam.positionId">
+                                            <option value="">请选择</option>
+                                            <option v-for="(name, i) of selectedPosition" :value="i">{{name}}</option>
+                                        </select>
+                                    </div>
 
-                                    <thead>
-                                        <tr>
-                                            <th class="serial">#</th>
-                                            <th>名称</th>
-                                            <th>工作城市</th>
-                                            <th>新资范围</th>
-                                            <th>学历要求</th>
-                                            <th>详情</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">地点</div>
+                                        <select class="form-control" v-model="queryParam.locationId">
+                                            <option value="">请选择</option>
+                                            <option v-for="(name, i) of locationList" :value="i">{{name}}</option>
+                                        </select>
+                                    </div>
 
-                                    <tbody id="positionTbody"></tbody>
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">学历要求</div>
+                                        <select class="form-control" v-model="queryParam.education">
+                                            <option value="">请选择</option>
+                                            <option value="初中及以下">初中及以下</option>
+                                            <option value="中专/中技">中专/中技</option>
+                                            <option value="高中">高中</option>
+                                            <option value="非全日制大专">非全日制大专</option>
+                                            <option value="全日制大专">全日制大专</option>
+                                            <option value="非全日制本科">非全日制本科</option>
+                                            <option value="全日制本科">全日制本科</option>
+                                            <option value="非全日制硕士">非全日制硕士</option>
+                                            <option value="全日制硕士">全日制硕士</option>
+                                            <option value="非全日制博士">非全日制博士</option>
+                                            <option value="全日制博士">全日制博士</option>
+                                        </select>
+                                    </div>
 
-                                </table>
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">实习</div>
+                                        <select class="form-control" v-model="queryParam.isPractice">
+                                            <option value="">请选择</option>
+                                            <option value="0">全职</option>
+                                            <option value="1">实习</option>
+                                        </select>
+                                    </div>
 
-                            </div> <!-- /.table-stats -->
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">工作经验</div>
+                                        <input type="text" class="form-control" v-model.trim="queryParam.workYear">
+                                        <div class="input-group-addon">年</div>
+                                    </div>
 
-                        </div><!-- /.card-stats -->
-                        <ul class="pagination" id="pagination2"></ul>
-                    </div> <!-- /.card-body -->
-                </div> <!-- /.col-xl-12 -->
-            </div> <!-- /.row -->
-        </div><!-- /.orders -->
-    </div><!-- .animated -->
-    <!-- /. right-panel  -->
+                                    <div class="col-md-6 form-group input-group" >
+                                        <div class="input-group-addon">工资范围</div>
+                                        <input type="text" class="form-control" v-model.trim="queryParam.startPrice">
+                                        <div class="input-group-addon">~</div>
+                                        <input type="text" class="form-control" v-model.trim="queryParam.endPrice">
+                                        <div class="input-group-addon">千元</div>
+                                    </div>
 
-    <!--positionAddModal  -->
-    <div class="modal fade" id="positionAddModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">当前状态</div>
+                                        <select class="form-control" v-model="queryParam.status">
+                                            <option value="">请选择</option>
+                                            <option v-for="(name, i) of jobStatus" :value="i">{{name}}</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class=" col-md-1">
+                                        <button type="button" class="btn btn-outline-primary" id="query" 
+                                        @click="queryJobList"><i class="fa fa-search"></i></button>
+                                    </div>
 
-                <div class="modal-header">
-                    <h4 class="modal-title">添加职位</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
+                                    <div>
+                                        <button type="button" class="btn btn-outline-primary" 
+                                        data-toggle="modal" data-target="#positionAddModal">
+                                        <i class=" fa fa-plus"></i>&nbsp; 添加职位</button>
+                                    </div>
+                                </div>
+                            </form>
 
-                <div class="modal-body">
-
-                    <form id="positionFrm">
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>职位类别:</label></div>
-                            <div class="col-12 col-md-4">
-                                <select class="form-control" id="pid"></select>
+                            <div class="card-header">
+                                <strong>已发布职位表</strong>
                             </div>
 
-                            <div class="col col-md-2"><label>职位名</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="name" id="name">
+                            <div class="card-body--">
+                                <div class="table-stats order-table ov-h" style="text-align: center;">
+                                    <table class="table" style="margin: 0 auto;">
+
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>名称</th>
+                                                <th>工作城市</th>
+                                                <th>所属行业</th>
+                                                <th>职位</th>
+                                                <th>薪资范围（千元）</th>
+                                                <th>学历要求</th>
+                                                <th>实习</th>
+                                                <th>当前状态</th>
+                                                <th>详情</th>
+                                                <th>操作</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="positionTbody">
+                                            <tr v-for="(job, i) of jobPage.records">
+                                                <th></th>
+                                                <th>{{job.name}}</th>
+                                                <th>{{locationList[job.locationId]}}</th>
+                                                <th>{{industryDetailList[job.industryId]}}</th>
+                                                <th>{{positionDetailList[job.positionId]}}</th>
+                                                <th>{{job.startPrice}}~{{job.endPrice}}</th>
+                                                <th>{{job.education}}</th>
+                                                <th>{{job.isPractice == '1' ? '实习' : '全职'}}</th>
+                                                <th :style="{'color' : job.status == '1'? 'green' : job.status == '2' || job.status == '4' ? 'red' : ''}">
+                                                    {{jobStatus[job.status]}}
+                                                </th>
+                                                <th>
+                                                    <button type="button" class="btn btn-primary" @click="openDetailModel(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;"><i class="fa fa-edit"></i></button>
+                                                </th>
+                                                <th>
+                                                    <button v-if="job.status == '1'" type="button" class="btn btn-info" @click="freezeJob(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;">冻结</button>
+                                                    <button v-if="job.status == '3'" type="button" class="btn btn-info" @click="unfreezeJob(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;">解冻</button>
+                                                    <button v-if="job.status == '2' || job.status == '4' || job.status == '5'" 
+                                                    type="button" class="btn btn-info" @click="reapplyJob(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;">提交申请</button>
+                                                    <button v-if="job.status == '0'" type="button" class="btn btn-danger" @click="recallApplication(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;">撤回申请</button>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
+
+                                </div> <!-- /.table-stats -->
+                                <div>
+                                    <button :disabled="jobPage.current==1" type="button" 
+                                    class="btn btn-outline" @click="lastPage"><i class="fa fa-arrow-left"></i></button>
+                                    <label>第{{jobPage.current}}页</label>
+                                    <button type="button" class="btn btn-outline" 
+                                    @click="nextPage"><i class="fa fa-arrow-right"></i></button>
+                                </div>
+
                             </div>
-                        </div>
+                            <ul class="pagination" id="pagination2"></ul>
+                        </div> <!-- /.card-body -->
+                    </div> <!-- /.col-xl-12 -->
+                </div> <!-- /.row -->
+            </div><!-- /.orders -->
+        </div><!-- .animated -->
+        <!-- /. right-panel  -->
 
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>最小工资</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="3000" min="0" max="9999999" step="100" type="number" class="form-control"
-                                    name="minSales" id="minSales">
-                            </div>
+        <!--positionAddModal  -->
+        <div class="modal fade" id="positionAddModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
 
-                            <div class="col col-md-2"><label>最大工资</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="10000" min="0" max="9999999" step="100" type="number" class="form-control"
-                                    name="maxSales" id="maxSales">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>工作城市</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="city" id="city">
-                            </div>
-
-                            <div class="col col-md-2"><label>招聘人数</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
-                                    name="requiredNum" id="requiredNum">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>学历要求</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="education" id="education">
-                            </div>
-
-                            <div class="col col-md-2"><label>技能要求</label></div>
-                            <div class="col-12 col-md-4">
-                                <button type="button" class="btn btn-outline-primary btn-sm" name="skillAddBtn">
-                                    <i class="fa fa-plus-circle"></i>&nbsp; 添加技能
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作详细地址</label>
-                            <textarea class="form-control" rows="2" name="address" id="address"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作经验要求</label>
-                            <textarea class="form-control" rows="3" name="workedyears" id="workedyears"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作详细描述:</label>
-                            <textarea class="form-control" rows="5" name="detail" id="detail"></textarea>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="positionAdd">提交</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!--/. positionAddModal  -->
-
-    <!--positionEditModal  -->
-    <div class="modal fade" id="positionEditModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">修改职位</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <div class="modal-body">
-
-                    <form id="positionFrm3">
-                        <input type="hidden" class="form-control" name="id3" id="id3">
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>职位类别:</label></div>
-                            <div class="col-12 col-md-4">
-                                <select class="form-control" id="pid2"></select>
-                            </div>
-
-                            <div class="col col-md-2"><label>职位名</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="name3" id="name3">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>最小工资</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="3000" min="0" max="9999999" step="100" type="number" class="form-control"
-                                    name="minSales3" id="minSales3">
-                            </div>
-
-                            <div class="col col-md-2"><label>最大工资</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="10000" min="0" max="9999999" step="100" type="number" class="form-control"
-                                    name="maxSales3" id="maxSales3">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>工作城市</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="city3" id="city3">
-                            </div>
-
-                            <div class="col col-md-2"><label>招聘人数</label></div>
-                            <div class="col-12 col-md-4">
-                                <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
-                                    name="requiredNum3" id="requiredNum3">
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col col-md-2"><label>学历要求</label></div>
-                            <div class="col-12 col-md-4">
-                                <input type="text" class="form-control" name="education3" id="education3">
-                            </div>
-
-                            <div class="col col-md-2"><label>技能要求</label></div>
-                            <div class="col-12 col-md-4">
-                                <button type="button" class="btn btn-outline-primary btn-sm" name="skillAddBtn">
-                                    <i class="fa fa-plus-circle"></i>&nbsp; 添加技能
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作详细地址</label>
-                            <textarea class="form-control" rows="2" name="address" id="address3"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作经验要求</label>
-                            <textarea class="form-control" rows="3" name="workedyears" id="workedyears3"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>工作详细描述:</label>
-                            <textarea class="form-control" rows="5" name="detail" id="detail3"></textarea>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="positionAdd2">提交</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!--/. positionEditModal  -->
-
-    <!--skillAddModal  -->
-    <div class="modal fade" id="skillAddModal">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">添加技能</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="table-stats order-table ov-h">
-                        <table class="table ">
-                            <thead>
-                                <tr style="display:block;">
-                                    <th style="width:20%">选择</th>
-                                    <th style="width:20%">编号</th>
-                                    <th style="width:20%">名称</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="skillTbody" style="height:200px;display:block;overflow:auto"></tbody>
-                        </table>
+                    <div class="modal-header">
+                        <h4 class="modal-title">添加职位</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
 
-                    <ul class="pagination" id="pagination1"></ul>
+                    <div class="modal-body">
 
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="skillModalBtn">关闭</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!--/. skillAddModal  -->
-
-
-    <!--/. positionDetailModal  -->
-    <div class="modal fade" id="positionDetailModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h4 class="modal-title">职位详情</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="positionFrm2">
-                        <div class="form-group">
-                            <label>工作详细地址</label>
-                            <textarea class="form-control" rows="2" name="address" id="address2"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>工作详细描述:</label>
-                            <textarea class="form-control" rows="5" name="detail" id="detail2"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>工作经验要求</label>
-                            <textarea class="form-control" rows="3" name="workedyears2" id="workedyears2"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label>技能要求</label>
-                            <div id="skillSet">
+                        <form id="positionFrm">
+                            <div class="form-group">
+                                <label>职位名</label>
+                                <input type="text" class="form-control" name="name" v-model="newJobParam.name">
                             </div>
-                        </div>
-                        <div class="form-group">
-                            <label>招聘人数</label>
-                            <input type="text" class="form-control" name="requiredNum2" id="requiredNum2">
-                        </div>
-                    </form>
-                </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                </div>
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>职位类别:</label></div>
+                                <div class="col-12 col-md-8 form-group input-group">
+                                    <select class="form-control" v-model="positionType2">
+                                        <option value="">请选择</option>
+                                        <option v-for="(position, i) of positionList" :value="i">{{position.name}}</option>
+                                    </select>
+                                    <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                    </div>
+                                    <select class="form-control" v-model="newJobParam.positionId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of selectedPosition2" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
 
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>行业类别:</label></div>
+                                <div class="col-12 col-md-8 form-group input-group">
+                                    <select class="form-control" v-model="industryType2">
+                                        <option value="">请选择</option>
+                                        <option v-for="(industry, i) of industryList" :value="i">{{industry.name}}</option>
+                                    </select>
+                                    <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                    </div>
+                                    <select class="form-control" v-model="newJobParam.industryId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of selectedIndustry2" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>最小工资</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input value="5" min="0" max="9999999" step="1" class="form-control"
+                                        name="minSales" v-model="newJobParam.startPrice">
+                                    <div class="input-group-addon">千元</div>
+                                </div>
+
+                                <div class="col col-md-2"><label>最大工资</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input value="10" min="0" max="9999999" step="1" class="form-control"
+                                        name="maxSales" v-model="newJobParam.endPrice">
+                                    <div class="input-group-addon">千元</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>工作城市</label></div>
+                                <div class="col-12 col-md-4">
+                                    <select class="form-control" v-model="newJobParam.locationId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of locationList" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>招聘人数</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                        name="requiredNum" v-model="newJobParam.requiredNum">
+                                    <div class="input-group-addon">人</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>学历要求</label></div>
+                                <div class="col-12 col-md-4">
+                                    <select class="form-control" v-model="newJobParam.education">
+                                        <option value="">请选择</option>
+                                        <option value="初中及以下">初中及以下</option>
+                                        <option value="中专/中技">中专/中技</option>
+                                        <option value="高中">高中</option>
+                                        <option value="非全日制大专">非全日制大专</option>
+                                        <option value="全日制大专">全日制大专</option>
+                                        <option value="非全日制本科">非全日制本科</option>
+                                        <option value="全日制本科">全日制本科</option>
+                                        <option value="非全日制硕士">非全日制硕士</option>
+                                        <option value="全日制硕士">全日制硕士</option>
+                                        <option value="非全日制博士">非全日制博士</option>
+                                        <option value="全日制博士">全日制博士</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>工作经验要求</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                        name="requiredNum" v-model="newJobParam.workYear">
+                                    <div class="input-group-addon">年</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>工作类型</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <select class="form-control" v-model="newJobParam.isPractice">
+                                        <option value="0">全职</option>
+                                        <option value="1">实习</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>工作详细地址</label>
+                                <textarea class="form-control" rows="2" name="address" v-model="newJobParam.address"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>工作详细描述</label>
+                                <textarea class="form-control" rows="5" name="detail" v-model="newJobParam.introduce"></textarea>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @click="newJobApplication" id="positionAdd">提交</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <!--/. positionAddModal  -->
+
+        <!--positionEditModal  -->
+        <div class="modal fade" id="positionEditModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">修改职位信息</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <form id="positionFrm">
+                            <div class="form-group">
+                                <label>职位名</label>
+                                <input :disabled="disEditAble" type="text" class="form-control" name="name" v-model="curJob.name">
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>职位类别:</label></div>
+                                <div class="col-12 col-md-8 form-group input-group">
+                                    <select :disabled="disEditAble" class="form-control" v-model="positionType3">
+                                        <option v-for="(position, i) of positionList" :value="i">{{position.name}}</option>
+                                    </select>
+                                    <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                    </div>
+                                    <select :disabled="disEditAble" class="form-control" v-model="curJob.positionId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of selectedPosition3" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>行业类别:</label></div>
+                                <div class="col-12 col-md-8 form-group input-group">
+                                    <select :disabled="disEditAble" class="form-control" v-model="industryType3">
+                                        <option v-for="(industry, i) of industryList" :value="i">{{industry.name}}</option>
+                                    </select>
+                                    <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                    </div>
+                                    <select :disabled="disEditAble" class="form-control" v-model="curJob.industryId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of selectedIndustry3" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>最小工资</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input :disabled="disEditAble" class="form-control" v-model="curJob.startPrice">
+                                    <div class="input-group-addon">千元</div>
+                                </div>
+
+                                <div class="col col-md-2"><label>最大工资</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input :disabled="disEditAble" class="form-control" v-model="curJob.endPrice">
+                                    <div class="input-group-addon">千元</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>工作城市</label></div>
+                                <div class="col-12 col-md-4">
+                                    <select :disabled="disEditAble" class="form-control" v-model="curJob.locationId">
+                                        <option value="">请选择</option>
+                                        <option v-for="(name, i) of locationList" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>招聘人数</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input :disabled="disEditAble" value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                        name="requiredNum" v-model="curJob.requiredNum">
+                                    <div class="input-group-addon">人</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>学历要求</label></div>
+                                <div class="col-12 col-md-4">
+                                    <select :disabled="disEditAble" class="form-control" v-model="curJob.education">
+                                        <option value="">请选择</option>
+                                        <option value="初中及以下">初中及以下</option>
+                                        <option value="中专/中技">中专/中技</option>
+                                        <option value="高中">高中</option>
+                                        <option value="非全日制大专">非全日制大专</option>
+                                        <option value="全日制大专">全日制大专</option>
+                                        <option value="非全日制本科">非全日制本科</option>
+                                        <option value="全日制本科">全日制本科</option>
+                                        <option value="非全日制硕士">非全日制硕士</option>
+                                        <option value="全日制硕士">全日制硕士</option>
+                                        <option value="非全日制博士">非全日制博士</option>
+                                        <option value="全日制博士">全日制博士</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>工作经验要求</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input :disabled="disEditAble" value="1" min="0" max="9999999" step="1" type="number" class="form-control"
+                                        name="requiredNum" v-model="curJob.workYear">
+                                    <div class="input-group-addon">年</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>工作类型</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <select :disabled="disEditAble" class="form-control" v-model="curJob.isPractice">
+                                        <option value="0">全职</option>
+                                        <option value="1">实习</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>工作详细地址</label>
+                                <textarea :disabled="disEditAble" class="form-control" rows="2" name="address" v-model="curJob.address"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>工作详细描述</label>
+                                <textarea :disabled="disEditAble" class="form-control" rows="5" name="detail" v-model="curJob.introduce"></textarea>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-6"><label>已投递人数：{{curJob.deliverNum}}</label></div>
+                                <div class="col col-md-6"><label>已面试人数：{{curJob.auditionNum}}</label></div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-body" style="border-top: 1px solid #e9ecef;">
+                        <form style="margin-top: 20px;">
+                            <div class="form-group">
+                                <h4>职位审核详情</h4>
+                            </div>
+                            <table class="table" style="margin: 0 auto; text-align: center;">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>申请时间</th>
+                                        <th>审核员</th>
+                                        <th>审核时间</th>
+                                        <th>审核结果</th>
+                                        <th>审核意见</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="positionTbody">
+                                    <tr v-for="(jobApplication, i) of curJobApplicationList">
+                                        <th></th>
+                                        <th>{{jobApplication.applicationTime}}</th>
+                                        <th>{{jobApplication.status == '0' ? "" : "匿名"}}</th>
+                                        <th>{{jobApplication.auditTime}}</th>
+                                        <th  :style="{'color' : jobApplication.status == '1'? 'green' : jobApplication.status == '2' || jobApplication.status == '4' ? 'red' : ''}">
+                                            {{jobStatus[jobApplication.status]}}
+                                        </th>
+                                        <th>{{jobApplication.reviewReason}}</th>
+                                        <th></th>
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </form>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button v-if="curJob.status == '2' || curJob.status == '4' || curJob.status == '5'" 
+                        type="button" class="btn btn-primary" @click="editAndApplication">提交申请</button>
+                        <button v-if="curJob.status == '2' || curJob.status == '4' || curJob.status == '5'" 
+                        type="button" class="btn btn-primary" @click="editJob">保存</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <!--/. positionEditModal  -->
+
     </div>
+
+    <script src="js/positionList.js"></script>
 
 </body>
 

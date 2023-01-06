@@ -16,6 +16,7 @@ jQuery(document).ready(function($) {
                 companyName : "",
                 industryList : industryList,
                 industryType : "",
+                imgUrl : "img/admin.jpg",
                 companyInfo : {
                     name : "",
                     fullName : "",
@@ -29,23 +30,41 @@ jQuery(document).ready(function($) {
                     imgPath : "",
                     industryId : "",
                     },
-                path : "",
+                file : "",
+            },
+            created() {
+                this.loadIco();
             },
             watch : {
                 industryType() {
                     this.companyInfo.industryId = "";
-                }
+                },
+                user () {
+                    this.loadIco();
+                },
             },
             computed : {
                 selectedIndustry() {
                     if (this.industryType != "") {
-                        return this.industryList[this.industryType].industryList;
+                        return this.industryList[this.industryType].detail;
                     } else {
                         return {};
                     }
                 }
             },
             methods : {
+                loadIco() {
+                    if (this.user != null && this.user.imgPath != null && this.user.imgPath != "") {
+                        var _this = this;
+                        axios.get(JSON_URL.file.ico + this.user.imgPath).then(function (response) {
+                            if (response.code == RESPONSE_CODE.SUCCESS) {
+                                _this.imgUrl = "data:image/png;base64," + response.data;
+                            } else {
+                                alert(response.msg);
+                            }
+                        });
+                    }
+                },
                 changeAppState() {
                     this.newCompany = !this.newCompany;
                 },
@@ -58,15 +77,27 @@ jQuery(document).ready(function($) {
                         $('textarea').trigger('input');
                     }, 100);
                 },
+                updateIco(e) {
+                    var icoFile = e.target.files[0];
+                    var _this = this;
+                    let postData = new FormData();
+                    postData.append("multipartFile", icoFile);
+                    axios.put(JSON_URL.user.update_ico, postData).then(function (response) {
+                        if (response.code == RESPONSE_CODE.SUCCESS) {
+                            _this.user.imgPath = response.data;
+                            saveUser(_this.user);
+                            _this.loadIco();
+                        } else {
+                            alert(response.msg);
+                        }
+                    });
+                },
                 submitEdit() {
                     this.editAble = true;
                     // submit
-                    let postData = new URLSearchParams();
-                    for (var key in user) {
-                        postData.append(key, user[key]);
-                    }
+                    let postData = copyObjWithoutNull(user);
                     var _this = this;
-                    axios.put(JSON_URL.user.update_base, postData).then(function (response) {
+                    axios.put(JSON_URL.user.update_base, user).then(function (response) {
                         if (response.code == RESPONSE_CODE.SUCCESS) {
                             saveUser(response.data);
                         } else {
@@ -92,10 +123,12 @@ jQuery(document).ready(function($) {
                     }
                     var _this = this;
                     if (this.newPwd == this.confirmPwd) {
-                        let postData = new URLSearchParams();
+                        let postData = new FormData();
+                        postData.append("id", this.user.id);
+                        postData.append("email", this.user.email);
                         postData.append("password", this.oldPwd);
                         postData.append("newPassword", this.newPwd);
-                        axios.put(JSON_URL.user.update_base, postData).then(function (response) {
+                        axios.put(JSON_URL.user.update_pswd, postData).then(function (response) {
                             alert(response.msg);
                         });
                         _this.oldPwd = "";
@@ -106,13 +139,44 @@ jQuery(document).ready(function($) {
                     }
                 },
                 pathChange(e) {
-                    this.path = e.target.value;
+                    this.file = e.target.files[0];
                 },
                 addOldCompany() {
-
+                    if (this.companyName == null || this.companyName == "") {
+                        alert("公司名不能为空");
+                    } else {
+                        let postData = new FormData();
+                        postData.append("companyFullName", this.companyName);
+                        axios.post(JSON_URL.hr_application.create + user.id, postData).then(function (response) {
+                            if (response.code == RESPONSE_CODE.SUCCESS) {
+                                alert("申请已提交，等待管理员审核");
+                            } else {
+                                alert(response.msg);
+                            }
+                        });
+                    }
                 },
                 createNewCompany() {
                     this.companyInfo.establishDate = $('#establishDate').val();
+                    let postData = new FormData();
+                    postData.append("companyName", this.companyInfo.name);
+                    postData.append("companyFullName", this.companyInfo.fullName);
+                    postData.append("companyIsListed", this.companyInfo.isListed);
+                    postData.append("companyScaleLevel", this.companyInfo.scaleLevel);
+                    postData.append("companyType", this.companyInfo.type);
+                    postData.append("companyCorporate", this.companyInfo.corporate);
+                    postData.append("companyRegisterCapital", this.companyInfo.registerCapital);
+                    postData.append("companyEstablishDate", this.companyInfo.establishDate);
+                    postData.append("companyIndustryId", this.companyInfo.industryId);
+                    postData.append("companyIntroduction", this.companyInfo.introduction);
+                    postData.append("multipartFile", this.file);
+                    axios.post(JSON_URL.new_company_application.create + user.id, postData).then(function (response) {
+                        if (response.code == RESPONSE_CODE.SUCCESS) {
+                            alert("申请已提交，等待管理员审核");
+                        } else {
+                            alert(response.msg);
+                        }
+                    });
                 }
             }
         });

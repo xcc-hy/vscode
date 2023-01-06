@@ -13,45 +13,263 @@
 </head>
 
 <body>
-    <!-- Animated -->
-    <div class="animated fadeIn">
+    <div id="main-company-application">
+        <!-- Animated -->
+        <div class="animated fadeIn">
 
-        <!-- Orders -->
-        <div class="orders">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card">
+            <!-- Orders -->
+            <div class="orders">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
 
-                        <div class="card-header">
-                            <strong>企业申请</strong>
-                        </div>
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">公司全名</div>
+                                        <input type="text" class="form-control" v-model.trim="queryParam.companyFullName">
+                                    </div>
 
-                        <div class="card-body">
-                            <div class="table-stats order-table ov-h">
-                                <table class="table ">
+                                    <div class="col-md-4 form-group input-group" >
+                                        <div class="input-group-addon">当前状态</div>
+                                        <select class="form-control" v-model="queryParam.status">
+                                            <option value="">请选择</option>
+                                            <option v-for="(name, i) of applicationStatus" :value="i">{{name}}</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class=" col-md-1">
+                                        <button type="button" class="btn btn-outline-primary" id="query" 
+                                        @click="queryList"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </form>
 
-                                    <thead>
-                                        <tr>
-                                            <th class="serial">#</th>
-                                            <th>用户名</th>
-                                            <th>营业执照</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
+                            <div class="card-header">
+                                <strong>企业申请</strong>
+                            </div>
 
-                                    <tbody id="applicationTbody"></tbody>
+                            <div class="card-body--">
+                                <div class="table-stats order-table ov-h" style="text-align: center;">
+                                    <table class="table" style="margin: 0 auto;">
 
-                                </table>
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th>申请人</th>
+                                                <th>申请时间</th>
+                                                <th>公司全名</th>
+                                                <th>公司类型</th>
+                                                <th>行业类别</th>
+                                                <th>审核状态</th>
+                                                <th>详情</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
 
-                            </div> <!-- /.table-stats -->
+                                        <tbody id="applicationTbody">
+                                            <tr v-for="(application, i) of applicationPage.records">
+                                                <th></th>
+                                                <th>{{application.applicationName}}</th>
+                                                <th>{{application.applicationTime}}</th>
+                                                <th>{{application.companyFullName}}</th>
+                                                <th>{{application.companyType}}</th>
+                                                <th>{{industryDetailList[application.companyIndustryId]}}</th>
+                                                <th :style="{'color' : application.status == '0'? 'red' : ''}">
+                                                    {{applicationStatus[application.status]}}
+                                                </th>
+                                                <th>
+                                                    <button type="button" class="btn btn-primary" @click="openDetailModel(i)"
+                                                    style="font-size: 5px; padding: 1px 5px;"><i class="fa fa-search"></i></button>
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </tbody>
 
-                        </div><!-- /.card-stats -->
-                        <ul class="pagination" id="pagination2"></ul>
-                    </div> <!-- /.card-body -->
-                </div> <!-- /.col-xl-12 -->
-            </div> <!-- /.row -->
-        </div><!-- /.orders -->
-    </div><!-- .animated -->
+                                    </table>
+
+                                </div> <!-- /.table-stats -->
+                                <div>
+                                    <button :disabled="applicationPage.current==1" type="button" 
+                                    class="btn btn-outline" @click="lastPage"><i class="fa fa-arrow-left"></i></button>
+                                    <label>第{{applicationPage.current}}页</label>
+                                    <button type="button" class="btn btn-outline" 
+                                    @click="nextPage"><i class="fa fa-arrow-right"></i></button>
+                                </div>
+
+                            </div><!-- /.card-stats -->
+
+                            <ul class="pagination" id="pagination2"></ul>
+                        </div> <!-- /.card-body -->
+                    </div> <!-- /.col-xl-12 -->
+                </div> <!-- /.row -->
+            </div><!-- /.orders -->
+        </div><!-- .animated -->
+
+        <div class="modal fade" id="applicationModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">企业申请详情</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <form id="positionFrm">
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>申请人</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.applicationName">
+                                </div>
+
+                                <div class="col col-md-2"><label>申请时间</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.applicationTime">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>企业简称</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyName">
+                                </div>
+
+                                <div class="col col-md-2"><label>企业全名</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyFullName">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>企业法人</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyCorporate">
+                                </div>
+
+                                <div class="col col-md-2"><label>企业类型</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyType">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>公司规模</label></div>
+                                <div class="col-12 col-md-4">
+                                    <select disabled class="form-control" v-model="curApplication.companyScaleLevel">
+                                        <option v-for="(name, i) of companyScale" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>创建时间</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyEstablishDate">
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>行业类别:</label></div>
+                                <div class="col-12 col-md-8 form-group input-group">
+                                    <select disabled class="form-control" v-model="industryType">
+                                        <option v-for="(industry, i) of industryList" :value="i">{{industry.name}}</option>
+                                    </select>
+                                    <div class="input-group-addon"><i class="fa fa-tasks"></i>
+                                    </div>
+                                    <select disabled class="form-control" v-model="curApplication.companyIndustryId">
+                                        <option v-for="(name, i) of selectedIndustry" :value="i">{{name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>是否上市</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <select disabled class="form-control" v-model="curApplication.companyIsListed">
+                                        <option value="0">否</option>
+                                        <option value="1">是</option>
+                                    </select>
+                                </div>
+
+                                <div class="col col-md-2"><label>注册资金</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.companyRegisterCapital">
+                                    <div class="input-group-addon">万元</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>公司详细地址</label>
+                                <textarea disabled class="form-control" rows="2" name="address" v-model="curApplication.companyAddress"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>公司介绍</label>
+                                <textarea disabled class="form-control" rows="5" name="detail" v-model="curApplication.companyIntroduction"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>营业执照</label>
+                                <div><img src="" id="licenseImg"></div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-body" style="border-top: 1px solid #e9ecef;">
+                        <form style="margin-top: 20px;">
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <h4>添加审核</h4>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col col-md-2"><label>审核人</label></div>
+                                <div v-if="curApplication.auditorId != null" class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.auditorName">
+                                </div>
+                                <div v-if="curApplication.auditorId == null" class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="user.name">
+                                </div>
+
+                                <div class="col col-md-2"><label>审核结果</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <select :disabled="curApplication.auditorId != null" class="form-control" v-model="curApplication.status">
+                                        <option value="0">未审核</option>
+                                        <option value="1">通过</option>
+                                        <option value="2">不通过</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>审核意见</label>
+                                <textarea :disabled="curApplication.auditorId != null" class="form-control" 
+                                rows="5" v-model="curApplication.reviewReason"></textarea>
+                            </div>
+
+                            <div v-if="curApplication.auditorId != null" class="form-group row">
+                                <div class="col col-md-2"><label>审核时间</label></div>
+                                <div class="col-12 col-md-4 form-group input-group">
+                                    <input disabled class="form-control" v-model="curApplication.auditTime">
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button v-if="curApplication.auditorId == null" type="button" class="btn btn-primary" @click="addApplication">提交</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script src="js/application.js"></script>
 </body>
 
 </html>

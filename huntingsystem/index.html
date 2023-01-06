@@ -171,12 +171,12 @@
                     <div class="user-area dropdown float-right">
                         <a href="login.html" class="dropdown-toggle active" aria-haspopup="true"
                             aria-expanded="false" v-show="!login">
-                            <img id="myImage" class="user-avatar rounded-circle" src="img/kodinger.jpg" alt="User Avatar">
+                            <img class="user-avatar rounded-circle" src="img/kodinger.jpg" alt="User Avatar">
                         </a>
 
                         <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false" v-show="login">
-                            <img id="myImage" class="user-avatar rounded-circle" src="img/admin.jpg" alt="User Avatar">
+                            <img id="myImage" class="user-avatar rounded-circle" :src="imgUrl" alt="User Avatar">
                         </a>
 
                         <div class="user-menu dropdown-menu" v-show="login">
@@ -187,7 +187,7 @@
 
                             <a class="nav-link" data="#"><i class="fa fa -cog"></i>Settings</a>
 
-                            <a class="nav-link" data="user/logout"><i class="fa fa-power -off"></i>Logout</a>
+                            <a class="nav-link" @click="logout"><i class="fa fa-power -off"></i>Logout</a>
                         </div>
                     </div>
 
