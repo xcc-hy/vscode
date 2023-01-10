@@ -87,7 +87,17 @@
                     <a class="navbar-brand" href="./"><img src="img/logo.png" alt="Logo" width="100px"></a>
                     <a class="navbar-brand hidden" href="./"><img src="img/logo2.png" alt="Logo"></a>
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
+                    
                 </div>
+            </div>
+            <div style="float: left;
+                    width: 350px;
+                    height: 100%;
+                    text-align: center;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;">
+                <label>当前角色：{{user == null ? "未登录" : user.roleName}}</label>
             </div>
             <div class="top-right">
                 <div class="header-menu">

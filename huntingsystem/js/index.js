@@ -9,7 +9,11 @@ jQuery(document).ready(function ($) {
     } else if ("求职者" == commonUser.roleName) {
         $("#leftdiv").load("leftmenuCommon.html");
     } else if ("企业" == commonUser.roleName) {
-        $("#leftdiv").load("leftmenuCompany.html");
+		if (commonUser.isManager == '1') {
+			$("#leftdiv").load("leftmenuCompany.html");
+		} else {
+			$("#leftdiv").load("leftmenuHr.html");
+		}
     } else if ("管理员" == commonUser.roleName) {
         $("#leftdiv").load("leftmenuAdmin.html");
     }

@@ -15,9 +15,15 @@ var JSON_URL = {
 		query_all : BASE_URL + "job/global/list/",
 		query_owner : BASE_URL + "job/list/",
 		query_manager : BASE_URL + "job/manager/list/",
+		query_owner_all : BASE_URL + "job/listByUserId",
 		freeze : BASE_URL + "job/freeze/",
 		unfreeze : BASE_URL + "job/unfreeze/",
 		edit : BASE_URL + "job/edit/",
+	},
+	star : {
+		add : BASE_URL + "userStar/add/",
+		remove : BASE_URL + "userStar/remove/",
+		query : BASE_URL + "userStar/queryMine",
 	},
 	job_application : {
 		create : BASE_URL + "newJobApplication/create",
@@ -27,6 +33,14 @@ var JSON_URL = {
 		refuse : BASE_URL + "newJobApplication/refuse/",
 		freeze : BASE_URL + "newJobApplication/freeze/",
 		recall : BASE_URL + "newJobApplication/recall/",
+	},
+	job_user_relation : {
+		send_resume : BASE_URL + "jobUserRelation/sendResume/",
+		query_mine : BASE_URL + "jobUserRelation/queryMine",
+		pass : BASE_URL + "jobUserRelation/passApplication/",
+		refuse : BASE_URL + "jobUserRelation/refuseApplication/",
+		next : BASE_URL + "jobUserRelation/nextProgress/",
+		fail : BASE_URL + "jobUserRelation/progressFail/",
 	},
 	company_application : {
 		query : BASE_URL + "newCompanyApplication/query/",
@@ -45,15 +59,33 @@ var JSON_URL = {
 	file : {
 		license : BASE_URL + "fileManager/license/",
 		ico : BASE_URL + "fileManager/ico/",
+		resume : BASE_URL + "fileManager/resume/",
 	},
 	hr_application : {
 		create : BASE_URL + "hrApplication/create/",
-		query : BASE_URL + "hrApplication/query",
+		query : BASE_URL + "hrApplication/query/",
 		pass : BASE_URL + "hrApplication/pass/",
+		refuse : BASE_URL + "hrApplication/refuse/",
 	},
 	new_company_application : {
 		create : BASE_URL + "newCompanyApplication/create/",
 		query : BASE_URL + "newCompanyApplication/query",
+	},
+	resume : {
+		query_mine : BASE_URL + "resume/queryMine",
+		query_resumes : BASE_URL + "resume/query/resume",
+		query : BASE_URL + "resume/queryById/",
+		education_create : BASE_URL + "resume/education/create",
+		project_create : BASE_URL + "resume/project/create",
+		work_create : BASE_URL + "resume/work/create",
+		resume_create : BASE_URL + "resume/resume/create",
+		education_edit : BASE_URL + "resume/education/edit/",
+		project_edit : BASE_URL + "resume/project/edit/",
+		work_edit : BASE_URL + "resume/work/edit/",
+		education_delete : BASE_URL + "resume/education/delete/",
+		project_delete : BASE_URL + "resume/project/delete/",
+		work_delete : BASE_URL + "resume/work/delete/",
+		resume_delete : BASE_URL + "resume/resume/work/delete/",
 	},
 };
 
@@ -226,21 +258,24 @@ getLocationList();
 // 获取用户信息
 function getUser() {
 
-	// // test
-	// return {
-	// 	id : 12,
-	// 	email : "220@163.com",
-	// 	name : "xdx",
-	// 	age : 10,
-	// 	gender : "男",
-	// 	phone : "123456",
-	// 	roleName : "管理员",
-	// 	education : "全日制大专",
-	// 	hometown : "翻斗大街",
-	// 	introduce : "不喜欢介绍自己",
-	// 	skill : "啥都不会也是技能",
-	// 	interest : "喜欢偷懒",
-	// };
+	// test
+	return {
+		id : 12,
+		email : "220@163.com",
+		name : "xdx",
+		age : 10,
+		gender : "男",
+		phone : "123456",
+		roleName : "企业",
+		education : "全日制大专",
+		hometown : "翻斗大街",
+		introduce : "不喜欢介绍自己",
+		skill : "啥都不会也是技能",
+		interest : "喜欢偷懒",
+		imgPath : null,
+		isManager : "1",
+		companyId : 2
+	};
 
 
 	var user = localStorage.getItem("user");
@@ -255,8 +290,8 @@ function getUser() {
 // 获取token，若token过期，则删除token
 function getToken() {
 
-	// // test
-	// return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjcwMDYyNjgsImV4cCI6MTk2NzAxMzQ2OCwiaWQiOiIxMiJ9.49btTx6OWDWnwEpKMh-peBRDMpHgSQerJeDGdg89klU";
+	// test
+	return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjcwMDYyNjgsImV4cCI6MTk2NzAxMzQ2OCwiaWQiOiIxMiJ9.49btTx6OWDWnwEpKMh-peBRDMpHgSQerJeDGdg89klU";
 
 	var token = localStorage.getItem("token");
 	if (token != null) {

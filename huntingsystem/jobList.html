@@ -171,8 +171,8 @@
         </div>
 
         <!--/. resumeSelectModal  -->
-        <div class="modal fade" id="resumeSelectModal">
-            <div class="modal-dialog modal-sm">
+        <div class="modal fade" id="resumeSelectModal" style="z-index: 1060;">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
 
                     <div class="modal-header">
@@ -185,19 +185,34 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>简历号</th>
-                                        <th>详情</th>
+                                        <th></th>
+                                        <th>简历名称</th>
+                                        <th>提交时间</th>
+                                        <th>选择</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
-                                <tbody id="resumeTbody"></tbody>
+                                <tbody>
+                                    <tr v-for="(item, i) of resumeList">
+                                        <th></th>
+                                        <th>{{item.resumeName}}</th>
+                                        <th>{{item.createTime}}</th>
+                                        <th>
+                                            <button v-if="item.id != curResumeId" type="button" class="btn btn-primary" @click="choose(i)"
+                                                style="font-size: 5px; padding: 1px 5px;"><i class="fa fa-check"></i></button>
+                                            <button v-else="item.id != curResumeId" type="button" class="btn btn-danger" @click="unChoose"
+                                                style="font-size: 5px; padding: 1px 5px;"><i class="fa fa-close"></i></button>
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
-                        <ul class="pagination" id="pagination2"></ul>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="resumeConfirmBtn">确认</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @click="sendResume">投递</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
                     </div>
 
                 </div>
@@ -443,6 +458,7 @@
                     </div>
 
                     <div class="modal-footer">
+                        <button v-if="user != null && user.roleName == '求职者'" type="button" class="btn btn-primary" @click="selectResume">投递简历</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                     </div>
 
